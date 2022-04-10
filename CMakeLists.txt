@@ -56,7 +56,7 @@ include(cmake/CompilerWarnings.cmake)
 
 #! Project main executable source compilation
 set(INCLUDE_DIR include/)
-set(SOURCE_FILES)
+set(SOURCE_FILES src/camera.cpp)
 add_executable(${PROJECT_NAME} main.cpp ${SOURCE_FILES}
 				options_parser/options_parser.cpp options_parser/options_parser.h)
 
