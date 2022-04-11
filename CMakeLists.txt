@@ -56,7 +56,7 @@ include(cmake/CompilerWarnings.cmake)
 
 #! Project main executable source compilation
 set(INCLUDE_DIR include/)
-set(SOURCE_FILES src/camera.cpp)
+set(SOURCE_FILES src/camera.cpp src/geom_utils.cpp src/rays.cpp src/utils.cpp)
 add_executable(${PROJECT_NAME} main.cpp ${SOURCE_FILES}
 				options_parser/options_parser.cpp options_parser/options_parser.h)
 
@@ -69,6 +69,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE options_parser PUBLIC ${INCLU
 find_package(Boost 1.71.0 COMPONENTS program_options system REQUIRED)
 target_include_directories(${PROJECT_NAME} PRIVATE ${Boost_INCLUDE_DIR} )
 target_link_libraries(${PROJECT_NAME} Boost::program_options Boost::system)
+
+find_package (Eigen3 3.4 REQUIRED NO_MODULE)
+target_link_libraries (${PROJECT_NAME} Eigen3::Eigen)
 
 						
 ##########################################################
