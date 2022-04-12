@@ -31,9 +31,9 @@ vector<ray_t> make_rays(uint32_t w, uint32_t h, const camera_t &camera, size_t n
         dest_pixel << w + dx, h + dy;
         dest = pixel2calibrated(dest_pixel, camera);
 
-//      rotate to world coordinates
+        //      rotate to world coordinates
         transform3d(dest, camera.get_R(), camera.get_T());
-        rays.emplace_back( dest);
+        rays.emplace_back(camera.get_T(), dest);
     }
     return rays;
 }

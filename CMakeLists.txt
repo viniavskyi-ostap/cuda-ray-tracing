@@ -56,12 +56,11 @@ include(cmake/CompilerWarnings.cmake)
 
 #! Project main executable source compilation
 set(INCLUDE_DIR include/)
-set(SOURCE_FILES src/camera.cpp src/geom_utils.cpp src/rays.cpp src/utils.cpp)
-add_executable(${PROJECT_NAME} main.cpp ${SOURCE_FILES}
-				options_parser/options_parser.cpp options_parser/options_parser.h)
+set(SOURCE_FILES src/camera.cpp src/geom_utils.cpp src/rays.cpp src/utils.cpp include/hittable.h include/triangle_mesh.h src/triangle_mesh.cpp)
+add_executable(${PROJECT_NAME} main.cpp ${SOURCE_FILES})
 
 #! Put path to your project headers
-target_include_directories(${PROJECT_NAME} PRIVATE options_parser PUBLIC ${INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIR})
 
 
 #! Add external packages

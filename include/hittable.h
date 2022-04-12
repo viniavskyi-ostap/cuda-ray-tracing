@@ -10,16 +10,17 @@
 
 using Eigen::Vector3d;
 
-struct hit_record {
+struct hit_record_t {
     Vector3d p;
     Vector3d normal;
+    double z;
 };
 
 class Hittable {
 public:
     Hittable() = default;
-    virtual ~Hittable() = default;
-    [[nodiscard]] virtual bool intersect(const ray_t& ray, double t_min, double t_max, hit_record& record) const = 0;
+    ~Hittable() = default;
+    virtual bool intersect(const ray_t& ray, hit_record_t& record) = 0;
 };
 
 #endif //RAY_TRACING_HITTABLE_H

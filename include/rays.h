@@ -14,9 +14,8 @@ using std::move;
 using Eigen::Vector3d;
 
 class ray_t {
-private:
-    Vector3d m_orig, m_dest;
 public:
+    Vector3d m_orig, m_dest;
     ray_t(Vector3d orig, Vector3d dest) : m_orig(move(orig)), m_dest(move(dest)) {}
     explicit ray_t(Vector3d dest) : m_orig(Vector3d::Zero()), m_dest(move(dest)) {}
 

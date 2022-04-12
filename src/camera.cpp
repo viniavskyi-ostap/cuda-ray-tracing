@@ -26,7 +26,7 @@ camera_t make_35mm_camera(uint32_t ccd_res_x, uint32_t ccd_res_y, Matrix3d R, Ve
                     std::move(R), std::move(T)};
 }
 
-Vector3d calibrated2pixel(const Vector3d &p, const camera_t &camera) {
+Vector3d calibrated2pixel(const Vector3d &p, const camera_t &camera){
     double fx = camera.get_fx(), fy = camera.get_fy();
     double cx = camera.get_cx(), cy = camera.get_cy();
     return Vector3d{(fx * p[0] + cx) / p[2], (fy * p[1] + cy) / p[2], 1};
