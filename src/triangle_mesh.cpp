@@ -4,29 +4,31 @@
 
 #include "triangle_mesh.h"
 
-bool tri_mesh::intersect(const ray_t &ray, hit_record_t &record) {
+bool tri_mesh::intersect(const ray_t &ray, hit_record_t &record) const {
 
     Vector3d p;
     Vector3d norm;
     bool is_outside = false;
     double dist = std::numeric_limits<double>::infinity();
-    Vector3d ray_direction = ray.m_dir.normalized();
     for (const auto &triangle: triangles){
-        double is_paralel = triangle.normal.dot(ray_direction);
-        if (is_paralel == 0)
+        double is_parallel = triangle.normal.dot(ray.get_dir());
+        if (is_parallel == 0)
             continue;
         double d_to_origin = (-triangle.normal).dot(triangle.vertexes[0]);
-        double t = -(triangle.normal.dot(ray.m_orig) + d_to_origin) / is_paralel;
+        double t = -(triangle.normal.dot(ray.get_orig()) + d_to_origin) / is_parallel;
+
+        std::cout << t << std::endl;
         if (t < 0) continue;
 
-        Vector3d intersection_point = ray.m_orig + t * ray_direction;
+        Vector3d intersection_point = ray.get_orig() + t * ray.get_dir();
 
         Vector3d inside_o_test;
         for (int i = 0; i <= 2; i++){
             Vector3d edge = triangle.vertexes[i+1 < 2 ? i+1: 0] - triangle.vertexes[i];
             Vector3d v_p = intersection_point - triangle.vertexes[i];
             inside_o_test = edge.cross(v_p);
-            if (triangle.normal.dot(inside_o_test) < -1E-8) is_outside = true;
+            if (triangle.normal.dot(inside_o_test) < -1E-15)
+                is_outside = true;
         }
 
         if (is_outside)

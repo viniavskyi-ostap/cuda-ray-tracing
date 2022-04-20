@@ -19,13 +19,13 @@ struct Triangle {
     Vector3d normal;
 };
 
-class tri_mesh: public Hittable {
+class tri_mesh: public hittable_t {
 private:
     std::vector<Triangle> triangles;
 public:
     tri_mesh() = delete;
     explicit tri_mesh(std::vector<Triangle> trg): triangles{std::move(trg)} {}
-    bool intersect(const ray_t& ray, hit_record_t& record) override;
+    bool intersect(const ray_t& ray, hit_record_t& record) const override;
 };
 
 tri_mesh make_mesh_from_obj(const std::string& file_name);

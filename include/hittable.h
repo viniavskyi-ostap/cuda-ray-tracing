@@ -16,11 +16,11 @@ struct hit_record_t {
     double z;
 };
 
-class Hittable {
+class hittable_t {
 public:
-    Hittable() = default;
-    ~Hittable() = default;
-    virtual bool intersect(const ray_t& ray, hit_record_t& record) = 0;
+    hittable_t() = default;
+    ~hittable_t() = default;
+    virtual bool intersect(const ray_t &ray, hit_record_t &record) const = 0;
 };
 
 #endif //RAY_TRACING_HITTABLE_H

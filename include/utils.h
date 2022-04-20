@@ -6,6 +6,9 @@
 #define RAY_TRACING_UTILS_H
 
 #include <random>
+#include <Eigen/Dense>
+
+using Eigen::Vector3d;
 
 template<typename Numeric, typename Generator = std::mt19937>
 Numeric random_uniform(Numeric from, Numeric to) {
@@ -21,5 +24,7 @@ Numeric random_uniform(Numeric from, Numeric to) {
 
     return dist(gen, typename dist_type::param_type{from, to});
 }
+
+Vector3d random_unit_ball();
 
 #endif //RAY_TRACING_UTILS_H

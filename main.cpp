@@ -3,38 +3,81 @@
 //
 
 #include <iostream>
-#include <vector>
-#include <string>
 #include <fstream>
-#include <sstream>
-#include <Eigen/Core>
-#include <Eigen/Geometry>
+#include <vector>
+
+#include "image.h"
 #include "camera.h"
 #include "rays.h"
+#include "rays_gen.h"
 #include "geom_utils.h"
 #include "hittable.h"
 #include "triangle_mesh.h"
 
-// F - 1-st is the index of a vertex, 2-nd texture coordinate, 3-rd index of a vertex normal
-
-// class Mesh: Hittable {std::vector<vertex>, std::<indices>, std::vector<normals>}
-
 using Eigen::MatrixXd;
 using Eigen::Vector3d;
 
-// Add shift from origin
-// Add origin to camera as attribute
-int main() {
+using scene_t = std::vector<hittable_t *>;
 
+constexpr size_t RAYS_SPAWNED = 3;
+constexpr int RECURSION_DEPTH = 3;
+
+Vector3d trace_rays(const std::vector<ray_t> &rays, const scene_t &scene, uint8_t depth) {
+    if (depth == 0)
+        return Vector3d{0., 0., 0.};
+
+    const static Vector3d BACKGROUND{0.75, 0.85, 1.};
+
+    auto color = Vector3d{0., 0., 0.};
+    hit_record_t record, curr_record;
+    bool has_hit;
+    std::vector<ray_t> secondary_rays;
+
+    for (const auto &ray: rays) {
+        has_hit = false;
+        curr_record.z = std::numeric_limits<double>::infinity();
+        for (const hittable_t *object: scene) {
+            if (object->intersect(ray, record)) {
+                has_hit = true;
+                if (record.z < curr_record.z)
+                    curr_record = record;
+            }
+        }
+
+        if (has_hit) {
+            std::cout << "Hitted" << std::endl;
+            secondary_rays = make_secondary_rays(curr_record, RAYS_SPAWNED);
+            color += 0.5 * trace_rays(secondary_rays, scene, depth - 1);
+        } else {
+            color += BACKGROUND;
+        }
+    }
+    color /= rays.size();
+    return color;
+}
+
+
+int main() {
+    constexpr uint32_t width = 12, height = 8;
     tri_mesh mesh = make_mesh_from_obj("../data/teapot.obj");
-//    auto cam = make_35mm_camera(1200, 800);
-//    auto R = eul2rot(0., 0., EIGEN_PI);
-//    cam.rotate(R).rotate(R).translate(Vector3d{13., 6., 3.});
-//    auto rays = make_rays(0, 0, cam, 5);
-//    double dist = std::numeric_limits<double>::infinity();
-//    std::cout << dist << std::endl;
-    hit_record_t r;
-    ray_t new_ray(Vector3d{13., 6., 3.}, Vector3d(-13., -6., -3.));
-    std::cout << mesh.intersect(new_ray, r) << std::endl;
-    std::cout << r.z;
+    auto cam = make_35mm_camera(width, height);
+    auto R = eul2rot(0., 0., EIGEN_PI);
+    cam.translate(Vector3d{13., 6., -6.});
+
+    scene_t scene{&mesh};
+
+    image_t image{width, height};
+    for (size_t i = 0; i < width; ++i) {
+        for (size_t j = 0; j < height; ++j) {
+            auto rays = make_rays(i, j, cam, RAYS_SPAWNED);
+            auto color = trace_rays(rays, scene, RECURSION_DEPTH);
+            image.set_pixel(i, j, color);
+        }
+    }
+
+    std::ofstream f{"../data/image.ppm"};
+    f << image_to_ppm(image);
+    f.close();
+
+    return 0;
 }

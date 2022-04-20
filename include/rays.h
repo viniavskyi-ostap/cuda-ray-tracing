@@ -14,17 +14,17 @@ using std::move;
 using Eigen::Vector3d;
 
 class ray_t {
-public:
+private:
     Vector3d m_orig, m_dir;
-    ray_t(Vector3d orig, Vector3d dir) : m_orig(move(orig)), m_dir(move(dir)) {}
-    explicit ray_t(Vector3d dir) : m_orig(Vector3d::Zero()), m_dir(move(dir)) {}
+public:
+    ray_t(Vector3d orig, Vector3d dir) : m_orig(move(orig)), m_dir(move(dir)) { m_dir.normalize(); }
+    explicit ray_t(Vector3d dir) : m_orig(Vector3d::Zero()), m_dir(move(dir)) { m_dir.normalize(); }
+
+    Vector3d get_orig() const { return m_orig; }
+    Vector3d get_dir() const { return m_dir; }
 
     friend std::ostream &operator<<(std::ostream &s, const ray_t &ray);
 
 };
-
-
-std::vector<ray_t> make_rays(uint32_t w, uint32_t h, const camera_t &camera, size_t num_rays);
-
 
 #endif //RAY_TRACING_RAYS_H
