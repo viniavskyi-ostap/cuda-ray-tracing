@@ -27,12 +27,14 @@ using Eigen::Vector3d;
 int main() {
 
     tri_mesh mesh = make_mesh_from_obj("../data/teapot.obj");
-    auto cam = make_35mm_camera(1200, 800);
-    auto R = eul2rot(0., 0., EIGEN_PI);
-    cam.rotate(R).rotate(R).translate(Vector3d{13., 6., 3.});
-    auto rays = make_rays(0, 0, cam, 5);
-
+//    auto cam = make_35mm_camera(1200, 800);
+//    auto R = eul2rot(0., 0., EIGEN_PI);
+//    cam.rotate(R).rotate(R).translate(Vector3d{13., 6., 3.});
+//    auto rays = make_rays(0, 0, cam, 5);
+//    double dist = std::numeric_limits<double>::infinity();
+//    std::cout << dist << std::endl;
     hit_record_t r;
-    ray_t new_ray(Vector3d{13., 6., 3.}, Vector3d(0, 0, 0));
+    ray_t new_ray(Vector3d{13., 6., 3.}, Vector3d(-13., -6., -3.));
     std::cout << mesh.intersect(new_ray, r) << std::endl;
+    std::cout << r.z;
 }

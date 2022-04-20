@@ -8,24 +8,29 @@ bool tri_mesh::intersect(const ray_t &ray, hit_record_t &record) {
 
     Vector3d p;
     Vector3d norm;
+    bool is_outside = false;
     double dist = std::numeric_limits<double>::infinity();
-    for (auto &triangle: triangles){
-        double is_paralel = triangle.normal.dot(ray.m_dest);
+    Vector3d ray_direction = ray.m_dir.normalized();
+    for (const auto &triangle: triangles){
+        double is_paralel = triangle.normal.dot(ray_direction);
         if (is_paralel == 0)
             continue;
         double d_to_origin = (-triangle.normal).dot(triangle.vertexes[0]);
         double t = -(triangle.normal.dot(ray.m_orig) + d_to_origin) / is_paralel;
         if (t < 0) continue;
 
-        Vector3d intersection_point = ray.m_orig + t * ray.m_dest;
+        Vector3d intersection_point = ray.m_orig + t * ray_direction;
 
         Vector3d inside_o_test;
-        for (int i = 0; i < 2; i++){
+        for (int i = 0; i <= 2; i++){
             Vector3d edge = triangle.vertexes[i+1 < 2 ? i+1: 0] - triangle.vertexes[i];
-            Vector3d v_p = intersection_point - edge;
+            Vector3d v_p = intersection_point - triangle.vertexes[i];
             inside_o_test = edge.cross(v_p);
-            if (triangle.normal.dot(inside_o_test) < 0) continue;
+            if (triangle.normal.dot(inside_o_test) < -1E-8) is_outside = true;
         }
+
+        if (is_outside)
+            continue;
 
         if (t < dist)
         {
@@ -36,18 +41,16 @@ bool tri_mesh::intersect(const ray_t &ray, hit_record_t &record) {
     }
     if (std::isinf(dist))
         return false;
-
     record.p = p;
     record.normal = norm;
     record.z = dist;
-    return false;
+    return true;
 }
 
 
 tri_mesh make_mesh_from_obj(const std::string& file_name){
     std::ifstream obj_file(file_name);
     std::string line;
-    std::cout << obj_file.is_open() << std::endl;
 
     std::vector<Vector3d> vertices;
     std::vector<Triangle> mesh_triangles;

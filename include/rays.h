@@ -15,9 +15,9 @@ using Eigen::Vector3d;
 
 class ray_t {
 public:
-    Vector3d m_orig, m_dest;
-    ray_t(Vector3d orig, Vector3d dest) : m_orig(move(orig)), m_dest(move(dest)) {}
-    explicit ray_t(Vector3d dest) : m_orig(Vector3d::Zero()), m_dest(move(dest)) {}
+    Vector3d m_orig, m_dir;
+    ray_t(Vector3d orig, Vector3d dir) : m_orig(move(orig)), m_dir(move(dir)) {}
+    explicit ray_t(Vector3d dir) : m_orig(Vector3d::Zero()), m_dir(move(dir)) {}
 
     friend std::ostream &operator<<(std::ostream &s, const ray_t &ray);
 

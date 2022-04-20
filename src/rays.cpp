@@ -13,7 +13,7 @@ using std::vector;
 using std::ostream;
 
 ostream &operator<<(ostream &s, const ray_t &ray){
-    s << "Ray(orig=" << ray.m_orig.transpose() << ", dest=" << ray.m_dest.transpose() << ")";
+    s << "Ray(orig=" << ray.m_orig.transpose() << ", dir=" << ray.m_dir.transpose() << ")";
     return s;
 }
 
