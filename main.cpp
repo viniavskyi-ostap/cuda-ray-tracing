@@ -21,8 +21,8 @@ using Eigen::Vector3d;
 
 using scene_t = std::vector<hittable_t *>;
 
-constexpr size_t RAYS_SPAWNED = 8;
-constexpr int RECURSION_DEPTH = 2;
+constexpr size_t RAYS_SPAWNED = 16;
+constexpr int RECURSION_DEPTH = 4;
 
 Vector3d trace_rays(const std::vector<ray_t> &rays, const scene_t &scene, uint8_t depth) {
     if (depth == 0)
@@ -47,7 +47,9 @@ Vector3d trace_rays(const std::vector<ray_t> &rays, const scene_t &scene, uint8_
         }
 
         if (has_hit) {
+            // make_secondary_rays(material)
             secondary_rays = make_secondary_rays(curr_record, RAYS_SPAWNED);
+            // 0.5 -> shader(material, curr_record, ray) -> vector(N)
             color += 0.5 * trace_rays(secondary_rays, scene, depth - 1);
         } else {
             color += BACKGROUND;
@@ -56,9 +58,9 @@ Vector3d trace_rays(const std::vector<ray_t> &rays, const scene_t &scene, uint8_
     color /= rays.size();
     return color;
 }
-
+//Materials, Look at, Better triangle intersection
 int main() {
-    constexpr uint32_t width = 300, height = 200;
+    constexpr uint32_t width = 60, height = 40;
     tri_mesh mesh = make_mesh_from_obj("../data/teapot.obj");
     auto cam = make_35mm_camera(width, height);
     auto R = eul2rot(0., 0., EIGEN_PI);
@@ -68,7 +70,7 @@ int main() {
     image_t image{width, height};
     for (size_t i = 0; i < width; ++i) {
         for (size_t j = 0; j < height; ++j) {
-            auto rays = make_rays(i, j, cam, fRAYS_SPAWNED);
+            auto rays = make_rays(i, j, cam, RAYS_SPAWNED);
             auto color = trace_rays(rays, scene, RECURSION_DEPTH);
             image.set_pixel(i, j, color);
         }

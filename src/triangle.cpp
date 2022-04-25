@@ -5,15 +5,16 @@
 
 #include "triangle.h"
 
-constexpr float kEpsilon = 1e-8;
+constexpr float kEpsilon = 1e-6;
 
 bool triangle_t::intersect(const ray_t &ray, hit_record_t &record) const {
     double is_parallel = normal.dot(ray.get_dir());
-    if (std::abs(is_parallel) < kEpsilon)
+    if (is_parallel < kEpsilon)
         return false;
     double d_to_origin = -(normal.dot(vertexes[0]));
     double t = -(normal.dot(ray.get_orig()) + d_to_origin) / is_parallel;
-    if (t < 0) return false;
+
+    if (t <= kEpsilon) return false;
 
     Vector3d intersection_point = ray.get_orig() + t * ray.get_dir();
     Vector3d inside_o_test;
