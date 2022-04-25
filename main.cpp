@@ -12,15 +12,17 @@
 #include "rays_gen.h"
 #include "geom_utils.h"
 #include "hittable.h"
+#include "sphere.h"
 #include "triangle_mesh.h"
+#include "triangle.h"
 
 using Eigen::MatrixXd;
 using Eigen::Vector3d;
 
 using scene_t = std::vector<hittable_t *>;
 
-constexpr size_t RAYS_SPAWNED = 3;
-constexpr int RECURSION_DEPTH = 3;
+constexpr size_t RAYS_SPAWNED = 8;
+constexpr int RECURSION_DEPTH = 2;
 
 Vector3d trace_rays(const std::vector<ray_t> &rays, const scene_t &scene, uint8_t depth) {
     if (depth == 0)
@@ -45,7 +47,6 @@ Vector3d trace_rays(const std::vector<ray_t> &rays, const scene_t &scene, uint8_
         }
 
         if (has_hit) {
-            std::cout << "Hitted" << std::endl;
             secondary_rays = make_secondary_rays(curr_record, RAYS_SPAWNED);
             color += 0.5 * trace_rays(secondary_rays, scene, depth - 1);
         } else {
@@ -56,20 +57,18 @@ Vector3d trace_rays(const std::vector<ray_t> &rays, const scene_t &scene, uint8_
     return color;
 }
 
-
 int main() {
-    constexpr uint32_t width = 12, height = 8;
+    constexpr uint32_t width = 300, height = 200;
     tri_mesh mesh = make_mesh_from_obj("../data/teapot.obj");
     auto cam = make_35mm_camera(width, height);
     auto R = eul2rot(0., 0., EIGEN_PI);
-    cam.translate(Vector3d{13., 6., -6.});
-
+    cam.translate(Vector3d{0, 0, -10});
     scene_t scene{&mesh};
 
     image_t image{width, height};
     for (size_t i = 0; i < width; ++i) {
         for (size_t j = 0; j < height; ++j) {
-            auto rays = make_rays(i, j, cam, RAYS_SPAWNED);
+            auto rays = make_rays(i, j, cam, fRAYS_SPAWNED);
             auto color = trace_rays(rays, scene, RECURSION_DEPTH);
             image.set_pixel(i, j, color);
         }
@@ -78,6 +77,5 @@ int main() {
     std::ofstream f{"../data/image.ppm"};
     f << image_to_ppm(image);
     f.close();
-
     return 0;
 }

@@ -10,21 +10,18 @@
 #include <fstream>
 #include "hittable.h"
 #include <cmath>
+#include "triangle.h"
+#include <array>
 
 using Eigen::MatrixXd;
 using Eigen::Vector3d;
 
-struct Triangle {
-    std::vector<Vector3d> vertexes;
-    Vector3d normal;
-};
-
 class tri_mesh: public hittable_t {
 private:
-    std::vector<Triangle> triangles;
+    std::vector<triangle_t> triangles;
 public:
     tri_mesh() = delete;
-    explicit tri_mesh(std::vector<Triangle> trg): triangles{std::move(trg)} {}
+    explicit tri_mesh(std::vector<triangle_t> trg): triangles{std::move(trg)} {}
     bool intersect(const ray_t& ray, hit_record_t& record) const override;
 };
 

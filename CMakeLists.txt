@@ -56,7 +56,7 @@ include(cmake/CompilerWarnings.cmake)
 
 #! Project main executable source compilation
 set(INCLUDE_DIR include/)
-set(SOURCE_FILES src/camera.cpp src/geom_utils.cpp src/rays.cpp src/utils.cpp src/triangle_mesh.cpp src/rays_gen.cpp)
+set(SOURCE_FILES src/camera.cpp src/geom_utils.cpp src/rays.cpp src/utils.cpp src/triangle_mesh.cpp src/rays_gen.cpp include/sphere.h src/sphere.cpp include/triangle.h src/triangle.cpp)
 add_executable(${PROJECT_NAME} main.cpp ${SOURCE_FILES})
 
 #! Put path to your project headers
@@ -66,7 +66,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIR})
 #! Add external packages
 # options_parser requires boost::program_options library
 find_package(Boost 1.71.0 COMPONENTS program_options system REQUIRED)
-target_include_directories(${PROJECT_NAME} PRIVATE ${Boost_INCLUDE_DIR} )
+target_include_directories(${PROJECT_NAME} PRIVATE ${Boost_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} Boost::program_options Boost::system)
 
 find_package (Eigen3 3.4 REQUIRED NO_MODULE)

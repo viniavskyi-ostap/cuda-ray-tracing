@@ -2,43 +2,22 @@
 // Created by Юрий Елисеев on 12.04.2022.
 //
 
+constexpr float kEpsilon = 1e-8;
 #include "triangle_mesh.h"
 
 bool tri_mesh::intersect(const ray_t &ray, hit_record_t &record) const {
 
     Vector3d p;
     Vector3d norm;
-    bool is_outside = false;
     double dist = std::numeric_limits<double>::infinity();
+    hit_record_t tri_record;
     for (const auto &triangle: triangles){
-        double is_parallel = triangle.normal.dot(ray.get_dir());
-        if (is_parallel == 0)
-            continue;
-        double d_to_origin = (-triangle.normal).dot(triangle.vertexes[0]);
-        double t = -(triangle.normal.dot(ray.get_orig()) + d_to_origin) / is_parallel;
-
-        std::cout << t << std::endl;
-        if (t < 0) continue;
-
-        Vector3d intersection_point = ray.get_orig() + t * ray.get_dir();
-
-        Vector3d inside_o_test;
-        for (int i = 0; i <= 2; i++){
-            Vector3d edge = triangle.vertexes[i+1 < 2 ? i+1: 0] - triangle.vertexes[i];
-            Vector3d v_p = intersection_point - triangle.vertexes[i];
-            inside_o_test = edge.cross(v_p);
-            if (triangle.normal.dot(inside_o_test) < -1E-15)
-                is_outside = true;
-        }
-
-        if (is_outside)
-            continue;
-
-        if (t < dist)
-        {
-            p = intersection_point;
-            norm = triangle.normal;
-            dist = t;
+        if (triangle.intersect(ray, tri_record)) {
+            if (tri_record.z < dist) {
+                p = tri_record.p;
+                norm = tri_record.normal;
+                dist = tri_record.z;
+            }
         }
     }
     if (std::isinf(dist))
@@ -55,7 +34,7 @@ tri_mesh make_mesh_from_obj(const std::string& file_name){
     std::string line;
 
     std::vector<Vector3d> vertices;
-    std::vector<Triangle> mesh_triangles;
+    std::vector<triangle_t> mesh_triangles;
     while (std::getline(obj_file, line)){
         std::string type;
         std::stringstream line_stream(line);
@@ -77,20 +56,15 @@ tri_mesh make_mesh_from_obj(const std::string& file_name){
                 std::getline(vertex_s, normal_idx, '/');
                 int v = std::stoi(vertex_idx);
                 int n = std::stoi(normal_idx);
+                v--; n--;
                 vertex_normal_idx.emplace_back(v, n);
             }
 
-            std::vector<Vector3d> tri_vertexes;
-            tri_vertexes.reserve(vertex_normal_idx.size());
-            for (auto v_pair: vertex_normal_idx){
-                tri_vertexes.push_back(vertices[v_pair.first]);
-            }
-            Vector3d edge_01(vertices[vertex_normal_idx[1].first] - vertices[vertex_normal_idx[0].first]);
-            Vector3d edge_02(vertices[vertex_normal_idx[2].first] - vertices[vertex_normal_idx[0].first]);
-            Vector3d face_norm = edge_01.cross(edge_02).normalized();
-            Triangle tri;
-            tri.vertexes = tri_vertexes;
-            tri.normal = face_norm;
+            std::array<Vector3d, 3> tri_vertexes;
+            for (size_t i = 0; i < vertex_normal_idx.size(); ++i)
+                tri_vertexes[i] = vertices[vertex_normal_idx[i].first];
+
+            triangle_t tri(tri_vertexes);
             mesh_triangles.push_back(tri);
         }
     }

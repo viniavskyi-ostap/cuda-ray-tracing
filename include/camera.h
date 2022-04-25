@@ -96,7 +96,7 @@ Vector3d pixel2calibrated(const Eigen::Matrix<T, 2, 1> &p, const camera_t &camer
     double fx = camera.get_fx(), fy = camera.get_fy();
     double cx = camera.get_cx(), cy = camera.get_cy();
 
-    return Vector3d{(p[0] - cx) / fx, (p[1] - cy) / fy, 1};
+    return Vector3d{(p[0] - cx) / fx, (cy - p[1]) / fy, 1} * camera.get_f();
 }
 
 
