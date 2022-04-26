@@ -5,10 +5,8 @@
 #ifndef RAY_TRACING_RAYS_H
 #define RAY_TRACING_RAYS_H
 
-#include <vector>
 #include <iostream>
 #include <Eigen/Dense>
-#include "camera.h"
 
 using std::move;
 using Eigen::Vector3d;
@@ -24,7 +22,6 @@ public:
     Vector3d get_dir() const { return m_dir; }
 
     friend std::ostream &operator<<(std::ostream &s, const ray_t &ray);
-
 };
 
 #endif //RAY_TRACING_RAYS_H

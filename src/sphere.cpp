@@ -16,8 +16,8 @@ bool sphere_t::intersect(const ray_t &ray, hit_record_t &record) const {
     if (dis < 0)
         return false;
 
-    double t = (-b - sqrt(dis));
-    if (t < 0)
+    double t = (-b - sqrt(dis));  // distance from ray origin to intersection point
+    if (t < 0)  // look only on the positive direction
         return false;
     record.z = t;
     record.p = ray.get_orig() + t * ray.get_dir();

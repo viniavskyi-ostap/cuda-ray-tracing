@@ -15,7 +15,7 @@ public:
     Vector3d center;
     double radius;
 
-    sphere_t(Vector3d cen, double r): center{std::move(cen)}, radius{r}{}
+    sphere_t(Vector3d center, double r): center{std::move(center)}, radius{r}{}
     bool intersect(const ray_t &ray, hit_record_t &record) const override;
 };
 #endif //RAY_TRACING_SPHERE_H

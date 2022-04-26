@@ -51,9 +51,12 @@ public:
         m_ccd_res(ccd_res_x, ccd_res_y), m_pp{ccd_res_x / 2, ccd_res_y / 2},
         m_R{Matrix3d::Identity()}, m_T{Vector3d::Zero()} {};
 
-    double get_f() const { return m_f; }
+    double get_f() const { return m_f; } // focal length in mm
     double get_fx() const { return m_ccd_res[0] * m_f / m_ccd_size[0]; }
     double get_fy() const { return m_ccd_res[1] * m_f / m_ccd_size[1]; }
+
+    double get_pixel_hsize() const { return m_ccd_size[0] / m_ccd_res[0]; }
+    double get_pixel_vsize() const { return m_ccd_size[1] / m_ccd_res[1]; }
 
     double get_fov() const {
         return 2 * atan(0.5 * sqrt(m_ccd_size[0] * m_ccd_size[0] + m_ccd_size[1] * m_ccd_size[1]) / m_f);
@@ -88,18 +91,17 @@ public:
 
 // utility functions for creating 35mm camera with 36x24mm^2 CCD
 camera_t make_35mm_camera(uint32_t ccd_res_x, uint32_t ccd_res_y);
-camera_t make_35mm_camera(uint32_t ccd_res_x, uint32_t ccd_res_y, Matrix3d R, Vector3d T);
 
 // conversion between pixel and calibrated ray spaces
 template<class T>
 Vector3d pixel2calibrated(const Eigen::Matrix<T, 2, 1> &p, const camera_t &camera) {
-    double fx = camera.get_fx(), fy = camera.get_fy();
     double cx = camera.get_cx(), cy = camera.get_cy();
-
-    return Vector3d{(p[0] - cx) / fx, (cy - p[1]) / fy, 1} * camera.get_f();
+    double pixel_hsize = camera.get_pixel_hsize(), pixel_vsize = camera.get_pixel_vsize();
+    return Vector3d{
+            (p[0] - cx) * pixel_hsize, // convert x and y pixel coordinates to mm
+            (cy - p[1]) * pixel_vsize,
+            camera.get_f()  // z = focal length in mm
+    };
 }
-
-
-Vector3d calibrated2pixel(Vector3d p, const camera_t &camera);
 
 #endif //RAY_TRACING_CAMERA_H

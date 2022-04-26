@@ -16,12 +16,13 @@ using Vector2ui32 = Eigen::Matrix<uint32_t, 2, 1>;
 Matrix3d eul2rot(double x, double y, double z);
 
 //homogenize 2D vector
-inline Vector3d homogenize(const Vector2ui32 &v) { return Vector3d{v[0], v[1], 1}; };
+template<typename T>
+inline Vector3d homogenize(const Eigen::Matrix<T, 2, 1> &v) { return Vector3d{v[0], v[1], 1}; };
 
 // rigid body motion
 inline Vector3d transform3d(const Vector3d &v, const Matrix3d &R, const Vector3d &T) { return R * v + T; }
-inline Vector3d& transform3d(Vector3d &v, const Matrix3d &R, const Vector3d &T) {
-    v  = R * v;
+inline Vector3d &transform3d(Vector3d &v, const Matrix3d &R, const Vector3d &T) {
+    v = R * v;
     v += T;
     return v;
 }

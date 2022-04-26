@@ -11,13 +11,13 @@ using Vector2ui32 = Eigen::Matrix<uint32_t, 2, 1>;
 using std::vector;
 
 
-vector<ray_t> make_rays(uint32_t w, uint32_t h, const camera_t &camera, size_t num_rays) {
+vector<ray_t> make_primary_rays(uint32_t w, uint32_t h, const camera_t &camera, size_t num_rays) {
     vector<ray_t> rays;
     rays.reserve(num_rays);
 
     double dx, dy;
-    Vector3d orig, dest;
-    Vector2d dest_pixel = Vector2d::Zero();
+    Vector3d dest;
+    Vector2d dest_pixel;
 
     for (size_t i = 0; i < num_rays; ++i) {
         dx = random_uniform(0., 1.);
@@ -26,13 +26,11 @@ vector<ray_t> make_rays(uint32_t w, uint32_t h, const camera_t &camera, size_t n
         dest = pixel2calibrated(dest_pixel, camera);
 
         // rotate to world coordinates
-        orig = camera.get_T();
         transform3d(dest, camera.get_R(), camera.get_T());
-        rays.emplace_back(orig, dest - orig);
+        rays.emplace_back(camera.get_T(), dest - camera.get_T());
     }
     return rays;
 }
-
 
 vector<ray_t> make_secondary_rays(const hit_record_t &record, size_t num_rays) {
     vector<ray_t> rays;
