@@ -16,7 +16,7 @@ int main() {
     // make camera and image
     image_t image{width, height};
     auto cam = make_35mm_camera(width, height);
-    cam.translate(Vector3d{0, 0, -25});
+    cam.translate(Vector3d{0, 1, -10});
 
     // make scene
     sphere_t sphere{Vector3d{0, 5., 0}, 2.};
