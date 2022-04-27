@@ -10,8 +10,7 @@ Eigen::Vector3d trace_rays(const std::vector<ray_t> &rays, const scene_t &scene,
     if (depth == 0)
         return Vector3d{0., 0., 0.};
 
-    const static Vector3d BACKGROUND{0.75, 0.85, 1.};
-
+    const static Vector3d BACKGROUND{0.75, 0.86, 1.};
     auto color = Vector3d{0., 0., 0.};
     hit_record_t record, curr_record;
     bool has_hit;
@@ -27,7 +26,6 @@ Eigen::Vector3d trace_rays(const std::vector<ray_t> &rays, const scene_t &scene,
                     curr_record = record;
             }
         }
-
         if (has_hit) {
             // make_secondary_rays(material)
             secondary_rays = make_secondary_rays(curr_record, RAYS_SPAWNED);

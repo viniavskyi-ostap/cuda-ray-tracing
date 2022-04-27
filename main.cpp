@@ -25,7 +25,6 @@ int main() {
 
     render(image, scene, cam, RECURSION_DEPTH);
 
-    // save output to PPM format image
     std::ofstream f{"../data/image.ppm"};
     f << image_to_ppm(image);
     f.close();
