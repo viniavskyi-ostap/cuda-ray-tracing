@@ -19,3 +19,7 @@ Vector3d random_unit_ball() {
             r * cos_theta
     };
 }
+
+Vector3d reflect(const Vector3d& v,  const Vector3d& n){
+    return v - 2 * v.dot(n) * n;
+}

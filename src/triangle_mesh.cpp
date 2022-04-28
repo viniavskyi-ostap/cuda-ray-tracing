@@ -5,13 +5,15 @@
 constexpr float kEpsilon = 1e-8;
 #include "triangle_mesh.h"
 
+#include <utility>
+
 bool tri_mesh::intersect(const ray_t &ray, hit_record_t &record) const {
 
     Vector3d p;
     Vector3d norm;
     double dist = std::numeric_limits<double>::infinity();
     hit_record_t tri_record;
-    for (const auto &triangle: triangles){
+    for (const auto &triangle: triangles) {
         if (triangle.intersect(ray, tri_record)) {
             if (tri_record.z < dist) {
                 p = tri_record.p;
@@ -25,6 +27,7 @@ bool tri_mesh::intersect(const ray_t &ray, hit_record_t &record) const {
     record.p = p;
     record.normal = norm;
     record.z = dist;
+    record.m_ptr = m_ptr;
     return true;
 }
 
@@ -37,7 +40,7 @@ double tri_mesh::get_bounding_sphere_radius() const {
 }
 
 
-tri_mesh make_mesh_from_obj(const std::string& file_name){
+tri_mesh make_mesh_from_obj(const std::string& file_name, std::shared_ptr<material_t> mat){
     std::ifstream obj_file(file_name);
     std::string line;
 
@@ -76,5 +79,5 @@ tri_mesh make_mesh_from_obj(const std::string& file_name){
             mesh_triangles.push_back(tri);
         }
     }
-    return tri_mesh(mesh_triangles);
+    return tri_mesh(mesh_triangles, std::move(mat));
 }

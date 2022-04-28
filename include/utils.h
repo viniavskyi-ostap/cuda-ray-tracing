@@ -26,5 +26,6 @@ Numeric random_uniform(Numeric from, Numeric to) {
 }
 
 Vector3d random_unit_ball();
+Vector3d reflect(const Vector3d& v,  const Vector3d& n);
 
 #endif //RAY_TRACING_UTILS_H
