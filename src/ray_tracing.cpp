@@ -27,12 +27,9 @@ Eigen::Vector3d trace_rays(const std::vector<ray_t> &rays, const scene_t &scene,
             }
         }
         if (has_hit) {
-            // make_secondary_rays(material)
+            // Create rays using material properties
             secondary_rays = make_secondary_rays(ray, curr_record, RAYS_SPAWNED);
-            // 0.5 -> shader(material, curr_record, ray) -> vector(N)
-            // Change 0.5 to material albedo
             Vector3d albedo = curr_record.m_ptr->get_albedo();
-            // Eigen is top library
             color.array() += albedo.array() * trace_rays(secondary_rays, scene, depth - 1).array();
         } else {
             color += BACKGROUND;
@@ -50,7 +47,6 @@ void render(image_t &image, const scene_t &scene, const camera_t &camera, int sp
         for (size_t j = 0; j < height; ++j) {
             auto rays = make_primary_rays(i, j, camera, RAYS_SPAWNED);
             auto color = trace_rays(rays, scene, spawn_depth);
-
             image.set_pixel(i, j, color);
         }
     }
