@@ -10,6 +10,8 @@
 #include <iostream>
 #include <Eigen/Dense>
 
+#include "hittable.h"
+
 
 using Eigen::Vector2d, Eigen::Vector3d, Eigen::Matrix3d;
 using Vector2ui32 = Eigen::Matrix<uint32_t, 2, 1>;
@@ -54,17 +56,20 @@ public:
     double get_f() const { return m_f; } // focal length in mm
     double get_fx() const { return m_ccd_res[0] * m_f / m_ccd_size[0]; }
     double get_fy() const { return m_ccd_res[1] * m_f / m_ccd_size[1]; }
+    double get_ccd_diagonal() const { return sqrt(m_ccd_size[0] * m_ccd_size[0] + m_ccd_size[1] * m_ccd_size[1]); }
 
     double get_pixel_hsize() const { return m_ccd_size[0] / m_ccd_res[0]; }
     double get_pixel_vsize() const { return m_ccd_size[1] / m_ccd_res[1]; }
 
     double get_fov() const {
-        return 2 * atan(0.5 * sqrt(m_ccd_size[0] * m_ccd_size[0] + m_ccd_size[1] * m_ccd_size[1]) / m_f);
+        return 2 * atan(0.5 * get_ccd_diagonal() / m_f);
     }
     double get_hfov() const { return 2 * atan(0.5 * m_ccd_size[0] / m_f); }
     double get_vfov() const { return 2 * atan(0.5 * m_ccd_size[1] / m_f); }
 
     Vector2ui32 get_image_res() const { return m_ccd_res; }
+    Vector2d get_ccd_size() const { return m_ccd_size; }
+
     double get_cx() const { return m_pp[0]; }
     double get_cy() const { return m_pp[1]; }
 
@@ -85,6 +90,8 @@ public:
         m_T += T;
         return *this;
     }
+
+    void look_at(const hittable_t *object);
 
     friend std::ostream &operator<<(std::ostream &s, const camera_t &camera);
 };

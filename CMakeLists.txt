@@ -58,7 +58,7 @@ include(cmake/CompilerWarnings.cmake)
 set(INCLUDE_DIR include/)
 set(SOURCE_FILES src/camera.cpp src/geom_utils.cpp src/rays.cpp src/utils.cpp
         src/triangle_mesh.cpp src/rays_gen.cpp include/sphere.h src/sphere.cpp
-        src/triangle.cpp src/image.cpp src/ray_tracing.cpp)
+        src/triangle.cpp src/image.cpp src/ray_tracing.cpp src/hittable.cpp)
 add_executable(${PROJECT_NAME} main.cpp ${SOURCE_FILES})
 
 #! Put path to your project headers

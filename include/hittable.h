@@ -21,6 +21,8 @@ public:
     hittable_t() = default;
     ~hittable_t() = default;
     virtual bool intersect(const ray_t &ray, hit_record_t &record) const = 0;
+    virtual Vector3d get_bounding_sphere_center() const = 0;
+    virtual double get_bounding_sphere_radius() const = 0;
 };
 
 #endif //RAY_TRACING_HITTABLE_H

@@ -28,6 +28,14 @@ bool tri_mesh::intersect(const ray_t &ray, hit_record_t &record) const {
     return true;
 }
 
+Vector3d tri_mesh::get_bounding_sphere_center() const {
+    return Vector3d{0., 1., 0.};
+}
+
+double tri_mesh::get_bounding_sphere_radius() const {
+    return 2.;
+}
+
 
 tri_mesh make_mesh_from_obj(const std::string& file_name){
     std::ifstream obj_file(file_name);

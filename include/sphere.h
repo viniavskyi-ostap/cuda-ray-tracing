@@ -17,5 +17,7 @@ public:
 
     sphere_t(Vector3d center, double r): center{std::move(center)}, radius{r}{}
     bool intersect(const ray_t &ray, hit_record_t &record) const override;
+    Vector3d get_bounding_sphere_center() const override;
+    double get_bounding_sphere_radius() const override;
 };
 #endif //RAY_TRACING_SPHERE_H

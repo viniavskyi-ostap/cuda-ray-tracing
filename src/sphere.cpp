@@ -24,3 +24,11 @@ bool sphere_t::intersect(const ray_t &ray, hit_record_t &record) const {
     record.normal = (record.p - center).normalized();
     return dis > 0;
 }
+
+Vector3d sphere_t::get_bounding_sphere_center() const {
+    return center;
+}
+
+double sphere_t::get_bounding_sphere_radius() const {
+    return radius;
+}
